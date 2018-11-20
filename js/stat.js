@@ -48,15 +48,13 @@ window.renderStatistics = function (ctx, names, times) {
   }
 
   // отрисовка столбцов
-  for (var f = 0; f < names.length; f++) {
-    var rnd = Math.random();
-    if (names[f] === 'Вы') {
-      ctx.fillStyle = 'rgba(255, 0, 0, 1)';
-    }
-    ctx.fillStyle = 'rgba(0, 0, 255, ' + rnd + ')';
-  }
-
   for (var k = 0; k < names.length; k++) {
+    var rnd = Math.random();
+    if (names[k] === 'Вы') {
+      ctx.fillStyle = 'rgba(255, 0, 0, 1)';
+    } else {
+      ctx.fillStyle = 'rgba(0, 0, 255, ' + rnd + ')';
+    }
     ctx.fillRect(CLOUD_X + GAP + (STRING_WIDTH + GAP) * k, CLOUD_Y - GAP_UP, STRING_WIDTH, (-barHeight * times[k]) / maxTime);
   }
 
