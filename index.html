@@ -189,12 +189,7 @@
     return 1.337*wizardWidth;
   };
   var getFireballSpeed = function (left) {
-    if (left) {
-      return 5;
-    }
-    else {
-      return 2;
-    };
+    return left ? 5 : 2;
   };
   var getWizardX = function (width) {
     return width/2-wizardWidth/2;
@@ -204,6 +199,7 @@
   };
 </script>
 
+<script src="js/stat.js"></script>
 <script src="js/game.js"></script>
 
 </body>
