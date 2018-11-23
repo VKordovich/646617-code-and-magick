@@ -18,7 +18,7 @@ var renderName = function (min, max) {
   var randomWizard = min - 0.5 + Math.random() * (max - min + 1);
   randomWizard = Math.round(randomWizard);
   return randomWizard;
-}
+};
 
 // массив магов
 var arrWizard = function () {
