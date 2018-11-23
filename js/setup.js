@@ -1,5 +1,5 @@
 'use strict';
-// показ окна с выбором персонажа (reverse ? WIZARD_FAMILY[randomName] + WIZARD_NAMES[randomName] : WIZARD_NAMES[randomName] + WIZARD_FAMILY[randomName];)
+// показ окна с выбором персонажа
 var userWindowSetting = document.querySelector('.setup');
 userWindowSetting.classList.remove('hidden');
 
@@ -11,22 +11,20 @@ var similarWizardTemplate = document.querySelector('#similar-wizard-template').c
 var WIZARD_NAMES = ['Иван ', 'Хуан Себастьян ', 'Мария ', 'Кристоф ', 'Виктор ', 'Юлия ', 'Люпита ', 'Вашингтон '];
 var WIZARD_FAMILY = ['да Марья ', 'Верон ', 'Мирабелла ', 'Вальц ', 'Онопко ', 'Топольницкая ', 'Нионго ', 'Ирвинг '];
 var WIZARD_COAT = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
-var WIZARD_EYES = ['black', 'red', 'blue', 'yellow', 'Онопко', 'green'];
+var WIZARD_EYES = ['black', 'red', 'blue', 'yellow', 'green'];
 
 // генератор случайных чисел
-var renderName = function () {
-  var randomName = Math.floor(Math.random() * WIZARD_NAMES.length);
-  var randomCoat = Math.floor(Math.random() * WIZARD_COAT.length);
-  var randomEyes = Math.floor(Math.random() * WIZARD_EYES.length);
-  var randomWizard = [randomName, randomCoat, randomEyes];
+var renderName = function (min, max) {
+  var randomWizard = min - 0.5 + Math.random() * (max - min + 1);
+  randomWizard = Math.round(randomWizard);
   return randomWizard;
-};
+}
 
 // массив магов
 var arrWizard = function () {
   var wizards = [];
   for (var j = 0; j < 4; j++) {
-    wizards[j] = {name: WIZARD_NAMES[renderName()[0]] + WIZARD_FAMILY[renderName()[0]], coatColor: WIZARD_COAT[renderName()[1]], eyesColor: WIZARD_EYES[renderName()[2]]};
+    wizards[j] = {name: WIZARD_NAMES[renderName(0, 7)] + WIZARD_FAMILY[renderName(0, 7)], coatColor: WIZARD_COAT[renderName(1, 6)], eyesColor: WIZARD_EYES[renderName(1, 5)]};
   }
   return wizards;
 };
