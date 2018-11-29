@@ -114,13 +114,13 @@ var changeColorFireball = function (place, color, hideInput) {
 };
 
 wizardCoatCurrent.addEventListener('click', function () {
-  changeColorWizard(wizardCoatCurrent, WIZARD_COAT[renderName(1, WIZARD_COAT.length)], inputCoatCurrent);
+  changeColorWizard(wizardCoatCurrent, WIZARD_COAT[renderName(0, WIZARD_COAT.length - 1)], inputCoatCurrent);
 });
 
 wizardEyesCurrent.addEventListener('click', function () {
-  changeColorWizard(wizardEyesCurrent, WIZARD_EYES[renderName(1, WIZARD_EYES.length)], inputEyesCurrent);
+  changeColorWizard(wizardEyesCurrent, WIZARD_EYES[renderName(0, WIZARD_EYES.length - 1)], inputEyesCurrent);
 });
 
 setupFireballCurrent.addEventListener('click', function () {
-  changeColorFireball(setupFireballCurrent, FIREBALL_COLOR[renderName(1, FIREBALL_COLOR.length)], inputFireballCurrent);
+  changeColorFireball(setupFireballCurrent, FIREBALL_COLOR[renderName(0, FIREBALL_COLOR.length - 1)], inputFireballCurrent);
 });
