@@ -1,9 +1,7 @@
 'use strict';
 (function () {
 
-  var setupDialogElement = document.querySelector('.setup');
-  var dialogHandler = setupDialogElement.querySelector('.upload');
-  var setupClose = setupDialogElement.querySelector('.setup-close');
+  var dialogHandler = window.setup.userWindowSetting.querySelector('.upload');
   var START_TOP = 80;
   var START_LEFT = 50;
 
@@ -31,8 +29,8 @@
         y: moveEvt.clientY
       };
 
-      setupDialogElement.style.top = (setupDialogElement.offsetTop - shift.y) + 'px';
-      setupDialogElement.style.left = (setupDialogElement.offsetLeft - shift.x) + 'px';
+      window.setup.userWindowSetting.style.top = (window.setup.userWindowSetting.offsetTop - shift.y) + 'px';
+      window.setup.userWindowSetting.style.left = (window.setup.userWindowSetting.offsetLeft - shift.x) + 'px';
 
     };
 
@@ -54,12 +52,12 @@
     };
 
     var resetWin = function () {
-      setupDialogElement.style.top = START_TOP + 'px';
-      setupDialogElement.style.left = START_LEFT + '%';
+      window.setup.userWindowSetting.style.top = START_TOP + 'px';
+      window.setup.userWindowSetting.style.left = START_LEFT + '%';
     };
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-    setupClose.addEventListener('click', resetWin);
+    window.setup.setupClose.addEventListener('click', resetWin);
   });
 
 })();
