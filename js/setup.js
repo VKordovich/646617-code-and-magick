@@ -50,7 +50,7 @@
   };
 
   form.addEventListener('submit', function (evt) {
-    window.save(new FormData(form), onLoadToServer, onErrorLoad);
+    window.backend.save(new FormData(form), onLoadToServer, onErrorLoad);
     evt.preventDefault();
   });
 
@@ -81,7 +81,7 @@
     document.body.insertAdjacentElement('afterbegin', node);
   };
 
-  window.load(onLoad, onErrorLoad);
+  window.backend.load(onLoad, onErrorLoad);
 
   // // создание фрагмента
   // var wizard = arrWizard();
