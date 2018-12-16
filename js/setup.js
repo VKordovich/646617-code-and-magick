@@ -9,15 +9,23 @@
 
   // показ области дополнительных персонажей
   document.querySelector('.setup-similar').classList.remove('hidden');
-  var similarListElement = document.querySelector('.setup-similar-list');
-  var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
+
   var form = window.setup.userWindowSetting.querySelector('.setup-wizard-form');
-  // var WIZARD_NAMES = ['Иван ', 'Хуан Себастьян ', 'Мария ', 'Кристоф ', 'Виктор ', 'Юлия ', 'Люпита ', 'Вашингтон '];
-  // var WIZARD_FAMILY = ['да Марья ', 'Верон ', 'Мирабелла ', 'Вальц ', 'Онопко ', 'Топольницкая ', 'Нионго ', 'Ирвинг '];
   var WIZARD_COAT = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
   var WIZARD_EYES = ['black', 'red', 'blue', 'yellow', 'green'];
   var FIREBALL_COLOR = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
+  var ESC_KEYCODE = 27;
+  var ENTER_KEYCODE = 13;
+  var wizardElement = document.querySelector('.setup-wizard');
+  var wizardCoatCurrent = wizardElement.querySelector('.wizard-coat');
+  var inputCoatCurrent = document.querySelector('.setup-player input:nth-of-type(1)');
+  var wizardEyesCurrent = wizardElement.querySelector('.wizard-eyes');
+  var inputEyesCurrent = document.querySelector('.setup-player input:nth-of-type(2)');
+  var setupFireballCurrent = document.querySelector('.setup-fireball-wrap');
+  var inputFireballCurrent = setupFireballCurrent.querySelector('input');
 
+  var wizardsAll = [];
+  var setupOpen = document.querySelector('.setup-open');
   // генератор случайных чисел
   var renderName = function (min, max) {
     var randomWizard = min - 0.5 + Math.random() * (max - min + 1);
@@ -25,25 +33,8 @@
     return randomWizard;
   };
 
-  // // массив магов
-  // var arrWizard = function () {
-  //   var wizards = [];
-  //   for (var j = 0; j < 4; j++) {
-  //     wizards[j] = {name: WIZARD_NAMES[renderName(0, 7)] + WIZARD_FAMILY[renderName(0, 7)], coatColor: WIZARD_COAT[renderName(1, 6)], eyesColor: WIZARD_EYES[renderName(1, 5)]};
-  //   }
-  //   return wizards;
-  // };
-
   // создание элемента
-  var renderWizard = function (wizard) {
-    var wizardElement = similarWizardTemplate.cloneNode(true);
 
-    wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
-    wizardElement.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
-    wizardElement.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
-
-    return wizardElement;
-  };
   // eslint-disable-next-line no-unused-vars
   var onLoadToServer = function (response) {
     window.setup.userWindowSetting.classList.add('hidden');
@@ -55,18 +46,9 @@
   });
 
   var onLoad = function (wizards) {
+    wizardsAll = wizards;
     // eslint-disable-next-line no-unused-vars
-    var compareNumeric = function (a, b) {
-      return Math.random() - 0.5;
-    };
-    var fragment = document.createDocumentFragment();
-    var wiazrdsSort = wizards.sort(compareNumeric);
-    for (var i = 0; i < 4; i++) {
-      fragment.appendChild(renderWizard(wiazrdsSort[i]));
-    }
-    similarListElement.appendChild(fragment);
-
-    window.setup.userWindowSetting.querySelector('.setup-similar').classList.remove('hidden');
+    window.render(wizards);
   };
 
   var onErrorLoad = function (errorMessage) {
@@ -82,22 +64,6 @@
   };
 
   window.backend.load(onLoad, onErrorLoad);
-
-  // // создание фрагмента
-  // var wizard = arrWizard();
-  // var fragment = document.createDocumentFragment();
-  // for (var i = 0; i < wizard.length; i++) {
-  //   fragment.appendChild(renderWizard(wizard[i]));
-  // }
-  // similarListElement.appendChild(fragment);
-
-  // window.setup.userWindowSetting.querySelector('.setup-similar').classList.remove('hidden');
-
-  var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
-
-  var setupOpen = document.querySelector('.setup-open');
-
 
   var onPopupEscPress = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
@@ -135,18 +101,61 @@
     }
   });
 
-  var wizardCoatCurrent = document.querySelector('.setup-wizard .wizard-coat');
-  var inputCoatCurrent = document.querySelector('.setup-player input:nth-of-type(1)');
+  var coatColor;
+  var eyesColor;
 
-  var wizardEyesCurrent = document.querySelector('.setup-wizard .wizard-eyes');
-  var inputEyesCurrent = document.querySelector('.setup-player input:nth-of-type(2)');
+  var DEBOUNCE_INTERVAL = 1000;
+  var lastTimeout;
+  var debounce = function (cb) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(cb, DEBOUNCE_INTERVAL);
+  };
 
-  var setupFireballCurrent = document.querySelector('.setup-fireball-wrap');
-  var inputFireballCurrent = setupFireballCurrent.querySelector('input');
+  var getRank = function (wizard) {
+    var rank = 0;
 
-  var changeColorWizard = function (place, color, hideInput) {
+    if (wizard.colorCoat === coatColor) {
+      rank += 2;
+    }
+    if (wizard.colorEyes === eyesColor) {
+      rank += 1;
+    }
+
+    return rank;
+  };
+
+  var namesComparator = function (left, right) {
+    if (left > right) {
+      return 1;
+    } else if (left < right) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
+  var updateWizards = function () {
+    window.render(wizardsAll.sort(function (left, right) {
+      var rankDiff = getRank(right) - getRank(left);
+      if (rankDiff === 0) {
+        rankDiff = namesComparator(left.name, right.name);
+      }
+      return rankDiff;
+    }));
+  };
+
+  var changeColorWizard = function (place, color, hideInput, choose) {
     place.style = 'fill: ' + color;
     hideInput.value = color;
+    if (choose) {
+      coatColor = color;
+      debounce(updateWizards);
+    } else {
+      eyesColor = color;
+      debounce(updateWizards);
+    }
   };
 
   var changeColorFireball = function (place, color, hideInput) {
@@ -155,11 +164,11 @@
   };
 
   wizardCoatCurrent.addEventListener('click', function () {
-    changeColorWizard(wizardCoatCurrent, WIZARD_COAT[renderName(0, WIZARD_COAT.length - 1)], inputCoatCurrent);
+    changeColorWizard(wizardCoatCurrent, WIZARD_COAT[renderName(0, WIZARD_COAT.length - 1)], inputCoatCurrent, true);
   });
 
   wizardEyesCurrent.addEventListener('click', function () {
-    changeColorWizard(wizardEyesCurrent, WIZARD_EYES[renderName(0, WIZARD_EYES.length - 1)], inputEyesCurrent);
+    changeColorWizard(wizardEyesCurrent, WIZARD_EYES[renderName(0, WIZARD_EYES.length - 1)], inputEyesCurrent, false);
   });
 
   setupFireballCurrent.addEventListener('click', function () {
