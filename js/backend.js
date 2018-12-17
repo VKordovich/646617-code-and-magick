@@ -1,7 +1,7 @@
 'use strict';
 (function () {
 
-  var LOAD_URL = ' https://js.dump.academy/code-and-magick/data';
+  var LOAD_URL = 'https://js.dump.academy/code-and-magick/data';
   var SAVE_URL = 'https://js.dump.academy/code-and-magick';
   var setup = function (xhr, onLoad, onError) {
     xhr.responseType = 'json';
